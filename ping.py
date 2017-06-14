@@ -4,6 +4,7 @@
 import os
 import sys
 
+from datetime import datetime
 import psycopg2
 import re
 import subprocess32
@@ -31,5 +32,23 @@ for line in ping_output.split('\n'):
         ping = Ping(host, time, ttl, bytes_received)
         pings.append(ping)
 
-# with psycopg2.connect('dbname={} user={}'.format(user, user)) as conn:
-#     pass
+with psycopg2.connect('dbname={} user={}'.format(user, user)) as conn:
+    # There is no need for transactions here, no risk of inconsistency etc
+    conn.autocommit = True
+
+    cursor = conn.cursor()
+
+    sql_command = """
+        INSERT INTO 
+          pings
+          (destination, bytes_received, ttl, pingtime)
+        VALUES
+          (%s, %s, %s, %s);
+    """
+
+    for ping in pings:
+        cursor.execute(sql_command, (ping.destination, ping.bytes, ping.ttl, ping.ping_time))
+
+    print('[{}]: Recorded {} pings'.format(datetime.now(), len(pings)))
+
+    cursor.close()
