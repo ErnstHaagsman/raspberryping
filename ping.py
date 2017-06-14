@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 # Usage: ping.py [host]
 import os
@@ -7,6 +7,8 @@ import sys
 from datetime import datetime
 import psycopg2
 import re
+
+import pwd
 import subprocess32
 
 from pingmodel import Ping
@@ -16,7 +18,7 @@ if len(sys.argv) != 2:
     exit(1)
 
 host = sys.argv[1]
-user = os.getlogin()
+user = pwd.getpwuid(os.getuid())[0]
 
 # Do the pings
 ping_output = subprocess32.check_output(["ping", host, "-c 5"])
