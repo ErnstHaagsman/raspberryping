@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pings</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            width: 640px;
+        }
+
+        h1{
+            border-bottom: 1px solid black;
+        }
+
+        .destination {
+            margin-top: 20px;
+            padding-top: 5px;
+            background-color: #CCC;
+        }
+
+        .destination p, h2 {
+            padding-left: 5px;
+        }
+
+        .destination h2 {
+            margin-bottom: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Ping Statistics</h1>
+
+    {% for destination in destinations %}
+    <div class="destination">
+    <h2>{{ destination.destination }}</h2>
+    <p><em>Last hour: min <b>{{ destination.min }}</b> ms, average <b>{{ destination.avg }}</b> ms, max
+        <b>{{ destination.max }}</b> ms</em></p>
+    <img src="/graphs/{{ destination.destination }}" alt="Ping performance over last 3 hours">
+    </div>
+    {% endfor %}
+</body>
+</html>
