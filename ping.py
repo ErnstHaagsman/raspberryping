@@ -27,7 +27,11 @@ pings = []
 for line in ping_output.split('\n'):
     if re.match("\d+ bytes from", line):
         bytes_received = line.split()[0]
-        parts = re.search('ttl=(\d+) time=(\d+\.\d+) ms', line.split(':')[1])
+        parts = re.search('ttl=(\d+) time=(\d+\.?\d*) ms', line.split(':')[1])
+
+        if not parts:
+            print('Could not read: {}'.format(line))
+
         ttl = parts.group(1)
         time = parts.group(2)
 
