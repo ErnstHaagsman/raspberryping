@@ -1,0 +1,4 @@
+Flask==0.10.1
+psycopg2==2.7.1
+matplotlib==2.0.2
+gunicorn==19.7.1

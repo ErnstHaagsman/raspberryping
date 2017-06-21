@@ -12,9 +12,14 @@ from matplotlib.figure import Figure
 
 app = Flask(__name__)
 
+pg_host = os.environ['PGHOST']
+pg_user = os.environ['PGUSER']
+pg_pass = os.environ['PGPASSWORD']
+pg_db = os.environ['PGDATABASE']
+
 
 def get_conn():
-    return psycopg2.connect('')
+    return psycopg2.connect(dbname=pg_db, host=pg_host, user=pg_user, password=pg_pass)
 
 
 @app.route('/')

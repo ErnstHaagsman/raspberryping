@@ -23,6 +23,11 @@ host = sys.argv[1]
 ping_output = subprocess32.check_output(["ping", host, "-c 5"])
 pings = []
 
+pg_host = os.environ['PGHOST']
+pg_user = os.environ['PGUSER']
+pg_pass = os.environ['PGPASSWORD']
+pg_db = os.environ['PGDATABASE']
+
 for line in ping_output.split('\n'):
     if re.match("\d+ bytes from", line):
         bytes_received = line.split()[0]
@@ -37,7 +42,7 @@ for line in ping_output.split('\n'):
         ping = Ping(host, time, ttl, bytes_received)
         pings.append(ping)
 
-with psycopg2.connect('') as conn:
+with psycopg2.connect(dbname=pg_db, host=pg_host, user=pg_user, password=pg_pass) as conn:
     # There is no need for transactions here, no risk of inconsistency etc
     conn.autocommit = True
 

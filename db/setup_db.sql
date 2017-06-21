@@ -1,4 +1,4 @@
-create table pings
+create table IF NOT EXISTS pings
 (
 	recorded_at timestamp with time zone default now(),
 	destination text,
@@ -7,4 +7,4 @@ create table pings
 	pingtime numeric
 );
 
-create index pings_recorded_at on pings(recorded_at);
+create index IF NOT EXISTS pings_recorded_at on pings(recorded_at);
