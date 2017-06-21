@@ -14,8 +14,7 @@ app = Flask(__name__)
 
 
 def get_conn():
-    user = pwd.getpwuid(os.getuid())[0]
-    return psycopg2.connect('dbname={} user={}'.format(user, user))
+    return psycopg2.connect('')
 
 
 @app.route('/')

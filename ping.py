@@ -18,7 +18,6 @@ if len(sys.argv) != 2:
     exit(1)
 
 host = sys.argv[1]
-user = pwd.getpwuid(os.getuid())[0]
 
 # Do the pings
 ping_output = subprocess32.check_output(["ping", host, "-c 5"])
@@ -38,7 +37,7 @@ for line in ping_output.split('\n'):
         ping = Ping(host, time, ttl, bytes_received)
         pings.append(ping)
 
-with psycopg2.connect('dbname={} user={}'.format(user, user)) as conn:
+with psycopg2.connect('') as conn:
     # There is no need for transactions here, no risk of inconsistency etc
     conn.autocommit = True
 
