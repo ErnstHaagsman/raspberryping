@@ -11,13 +11,24 @@ import re
 import pwd
 import subprocess32
 
-from pingmodel import Ping
-
 if len(sys.argv) != 2:
     print("Usage: ping.py [host]")
     exit(1)
 
 host = sys.argv[1]
+
+
+class Ping:
+
+    def __init__(self, destination, ping_time, ttl, bytes):
+        self.destination = destination
+        self.ping_time = ping_time
+        self.ttl = ttl
+        self.bytes = bytes
+
+    def __repr__(self):
+        return 'PING: {} bytes to {} in {} ms, ttl: {}'\
+                 .format(self.bytes, self.destination, self.ping_time, self.ttl)
 
 # Do the pings
 ping_output = subprocess32.check_output(["ping", host, "-c 5"])
