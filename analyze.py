@@ -14,6 +14,10 @@ app = Flask(__name__)
 
 
 def get_conn():
+    # The raspberry pi has been set up to allow peer authentication locally, and we've created a database
+    # and a role with the same name as the linux user we're running this script as. Therefore we can use an
+    # empty connection string.
+    # See for details: http://initd.org/psycopg/docs/module.html#psycopg2.connect
     return psycopg2.connect('')
 
 
