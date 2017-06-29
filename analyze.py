@@ -2,6 +2,8 @@ import os
 import pwd
 
 import StringIO
+
+import pandas as pd
 from flask import Flask, render_template, make_response
 
 import psycopg2
@@ -9,6 +11,7 @@ import psycopg2.extras
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.dates import DateFormatter
 from matplotlib.figure import Figure
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
@@ -113,6 +116,70 @@ def graph(destination):
     ax.plot_date(
         x=begin_times,
         y=mins,
+        label='min',
+        linestyle='solid'
+    )
+
+    ax.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Round Trip (ms)')
+    ax.set_ylim(bottom=0)
+
+    ax.legend()
+
+    # Output plot as PNG
+    # canvas = FigureCanvasAgg(fig)
+    png_output = StringIO.StringIO()
+
+    # canvas.print_png(png_output, transparent=True)
+    fig.set_canvas(FigureCanvasAgg(fig))
+    fig.savefig(png_output, transparent=True)
+
+    response = make_response(png_output.getvalue())
+    response.headers['content-type'] = 'image/png'
+    return response
+
+
+@app.route('/pandas/<destination>')
+def pandas(destination):
+    engine = create_engine('postgres:///pi')
+
+    with engine.connect() as conn, conn.begin():
+
+        data = pd.read_sql_query("select recorded_at, pingtime from pings where recorded_at > now() - interval "
+                                 "'3 hours' and "
+                                 "destination='jetbrains.com'; ", conn)
+
+    engine.dispose()
+
+    df = data.set_index(pd.DatetimeIndex(data['recorded_at']))
+
+    # We have this information in the index now, so let's drop it
+    del df['recorded_at']
+
+    result = df.resample('10T').agg(['min', 'mean', 'max'])
+
+    fig = Figure()
+    ax = fig.add_subplot(111)
+
+    ax.plot(
+        result.index,
+        result['pingtime', 'max'],
+        label='max',
+        linestyle='solid'
+    )
+
+    ax.plot_date(
+        result.index,
+        result['pingtime', 'mean'],
+        label='avg',
+        linestyle='solid'
+    )
+
+    ax.plot_date(
+        result.index,
+        result['pingtime', 'min'],
         label='min',
         linestyle='solid'
     )
