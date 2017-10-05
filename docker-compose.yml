@@ -1,7 +1,17 @@
 version: '2'
 services:
+  collect:
+    build: ./collect
+    depends_on:
+      - db
+    environment:
+      PGHOST: db
+      PGUSER: dbuser
+      PGPASSWORD: secret
+      PGDATABASE: dbuser
+
   web:
-    build: .
+    build: ./analyze
     depends_on:
       - db
     environment:
@@ -14,6 +24,8 @@ services:
 
   db:
     build: ./db
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: dbuser
       POSTGRES_PASSWORD: secret

@@ -1,1 +1,0 @@
-* * * * * root /app/ping.py jetbrains.com >> /var/log/pings.log 2>&1
